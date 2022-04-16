@@ -43,8 +43,15 @@ public class Util {
 		
 		// implement: read the descriptions above
 		boolean cond = false;
+		boolean checkLowerUpper = (lower.compareTo(upper) > 0);
+		boolean checkIdUpper = (id.compareTo(upper) <= 0);
 
-		
+        //modifies upper and id when lower > upper
+		if (checkLowerUpper) upper.add(Hash.addressSize());
+		if (checkIdUpper) id.add(Hash.addressSize());
+
+		if ((lower.compareTo(id)<= 0) && (id.compareTo(upper)<=0)) cond = true;
+
 		return cond;
 	}
 	
@@ -54,8 +61,8 @@ public class Util {
 			{
 				nodestr.add(((Node)node).getNodeName());
 			}
-		);
-		
+		)
+
 		return nodestr;
 	}
 	
