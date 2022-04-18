@@ -76,7 +76,7 @@ public class FileManager {
     	int counter = 0;
     	
     	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
-    	Random random = new Random;
+    	Random random = new Random();
 		int ind = random.nextInt(Util.numReplicas-1);
 		createReplicaFiles();
 

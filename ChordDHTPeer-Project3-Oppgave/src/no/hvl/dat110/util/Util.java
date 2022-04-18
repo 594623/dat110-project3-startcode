@@ -61,7 +61,7 @@ public class Util {
 			{
 				nodestr.add(((Node)node).getNodeName());
 			}
-		)
+		);
 
 		return nodestr;
 	}
