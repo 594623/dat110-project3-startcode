@@ -76,7 +76,18 @@ public class FileManager {
     	int counter = 0;
     	
     	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
-    	
+    	Random random = new Random;
+		int ind = random.nextInt(Util.numReplicas-1);
+		createReplicaFiles();
+
+		for(BigInteger key : replicafiles){
+			NodeInterface successor = chordnode.findSuccessor(key);
+
+			successor.addKey(key);
+			successor.saveFileContent(filename, key, bytesOfFile, counter == ind);
+
+			counter++;
+		}
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
     	
     	// create replicas of the filename
@@ -108,9 +119,18 @@ public class FileManager {
 		// Task: Given a filename, find all the peers that hold a copy of this file
 		
 		// generate the N replicas from the filename by calling createReplicaFiles()
-		
+		createReplicaFiles();
 		// it means, iterate over the replicas of the file
-		
+		for (int i=0; i<this.numReplicas; i++) {
+
+			BigInteger nr = this.replicafiles[i];
+
+			NodeInterface successor = this.chordnode.findSuccessor(nr);
+
+			Message message = successor.getFilesMetadata(nr);
+
+			succinfo.add(message);
+		}
 		// for each replica, do findSuccessor(replica) that returns successor s.
 		
 		// get the metadata (Message) of the replica from the successor, s (i.e. active peer) of the file
@@ -137,7 +157,13 @@ public class FileManager {
 		// use the primaryServer boolean variable contained in the Message class to check if it is the primary or not
 		
 		// return the primary
-		
+		for (Message message : activeNodesforFile) {
+			if(message.isPrimaryServer()) {
+				NodeInterface p = Util.getProcessStub(message.getNodeIP(), message.getPort());
+
+				return p;
+			}
+		}
 		return null; 
 	}
 	

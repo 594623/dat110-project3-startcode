@@ -47,35 +47,40 @@ public class MutualExclusion {
 
 	public boolean doMutexRequest(Message message, byte[] updates) throws RemoteException {
 		
-		System.out.println(node.nodename + " wants to access CS");
+		System.out.print(node.nodename + " wants to access CS");
 		
 		// clear the queueack before requesting for votes
-		
+		queueack.clear();
 		// clear the mutexqueue
-		
+		mutexqueue.clear();
 		// increment clock
-		
+		clock.increment();
 		// adjust the clock on the message, by calling the setClock on the message
-				
+		message.setClock(clock.getClock());
 		// wants to access resource - set the appropriate lock variable
-	
+		WANTS_TO_ENTER_CS = true;
 		
 		// start MutualExclusion algorithm
-		
-		// first, removeDuplicatePeersBeforeVoting. A peer can contain 2 replicas of a file. This peer will appear twice
 
+		// first, removeDuplicatePeersBeforeVoting. A peer can contain 2 replicas of a file. This peer will appear twice
+		List<Message> melding = removeDuplicatePeersBeforeVoting();
 		// multicast the message to activenodes (hint: use multicastMessage)
-		
+		multicastMessage(message, melding);
 		// check that all replicas have replied (permission)
-		
-		// if yes, acquireLock
-		
-		// node.broadcastUpdatetoPeers
-		
-		// clear the mutexqueue
-		
-		// return permission
-		
+
+		//put this in a seperate boolean?
+		if(areAllMessagesReturned(melding.size())) {
+			// if yes, acquireLock
+			acquireLock();
+			// node.broadcastUpdatetoPeers
+			node.broadcastUpdatetoPeers(updates);
+			// clear the mutexqueue
+			mutexqueue.clear();
+			// return permission
+			return true;
+		}
+
+
 		
 		return false;
 	}
