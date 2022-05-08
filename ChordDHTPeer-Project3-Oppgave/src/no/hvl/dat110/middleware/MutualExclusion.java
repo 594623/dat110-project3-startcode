@@ -207,7 +207,12 @@ public class MutualExclusion {
 			// obtain a stub for each node from the registry
 			NodeInterface stub = Util.getProcessStub(msg.getNodeIP(), msg.getPort());
 			// call releaseLocks()
-			stub.releaseLocks();
+			try {
+				stub.releaseLocks();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	
 	}
@@ -219,7 +224,7 @@ public class MutualExclusion {
 		queueack.clear();
 		// return true if yes and false if no
 
-		return equalSize;
+		return isEqual;
 	}
 	
 	private List<Message> removeDuplicatePeersBeforeVoting() {
